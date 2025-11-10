@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Payroll System - CS 1130</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body, h1, h2, h3, h4, h5, h6, p, li, a, button, th, td {
+            font-family: Cambria, serif !important;
+        }
+        .assignment-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+        .custom-navbar {
+            background-color: #1D2756 !important;
+        }
+        .custom-navbar a,
+        .custom-navbar button {
+            color: white !important;
+        }
+        .w3-dropdown-content a {
+            color: black !important;
+        }
+        .header-section {
+            padding-top: 60px !important;
+            padding-bottom: 20px !important;
+        }
+        .header-section h1 {
+            margin-bottom: 10px !important;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #1D2756;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar custom-navbar w3-card">
+    <a href="index.html" class="w3-bar-item w3-button w3-padding-large w3-center">HOME</a>
+    
+    <div class="w3-dropdown-hover w3-hide-small">
+      <button class="w3-padding-large w3-button" title="More">PROGRAMS <i class="fa fa-caret-down"></i></button>     
+      <div class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="Conversion.html" class="w3-bar-item w3-button">1. Conversion</a>
+        <a href="TaxCalculator.html" class="w3-bar-item w3-button">2. Income Tax Calculator</a>
+        <a href="#looping" class="w3-bar-item w3-button">3. Looping Programs</a>
+        <a href="EmployeePayroll.html" class="w3-bar-item w3-button">4. Payroll System</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Content-->
+<div class="w3-content" style="max-width:2000px;margin-top:46px">
+
+<!-- Payroll System -->
+  <div class="w3-container w3-content" style="max-width:1200px">
+    
+    <div class="assignment-section">
+      <h1>Payroll System</h1>
+      
+      <!-- Input Form -->
+      <div>
+        <div class="input-group">
+          <label>Employee Name:</label><br>
+          <input type="text" id="employeeName">
+        </div>
+        
+        <div class="input-group">
+          <label>Days Worked:</label><br>
+          <input type="number" id="daysWorked">
+        </div>
+        
+        <div class="input-group">
+          <label>Daily Rate (PHP):</label><br>
+          <input type="number" id="dailyRate">
+        </div>
+        
+        <div class="input-group">
+          <label>Deduction Amount (PHP):</label><br>
+          <input type="number" id="deductionAmount">
+        </div>
+        
+        <button id="addEmployeeBtn">Add Employee</button>
+      </div>
+      
+      <!-- Delete Form -->
+      <div style="margin-top: 30px;">
+        <div class="input-group">
+          <label>Line Number to Delete:</label><br>
+          <input type="number" id="deleteLineNumber">
+        </div>
+        <button id="deleteEmployeeBtn">Delete Employee</button>
+      </div>
+      
+      <!-- Payroll Table -->
+      <div id="payrollTable">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Employee Name</th>
+              <th>Days Worked</th>
+              <th>Daily Rate</th>
+              <th>Gross Pay</th>
+              <th>Deduction Amount</th>
+              <th>Net Pay</th>
+            </tr>
+          </thead>
+          <tbody id="payrollBody">
+            <!-- Table rows will be added here dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </div>
+
+</div>
+
+<script>
+const employees = [];
+
+const addEmployee = () => {
+    const name = document.getElementById('employeeName').value.trim();
+    const daysWorked = parseFloat(document.getElementById('daysWorked').value);
+    const dailyRate = parseFloat(document.getElementById('dailyRate').value);
+    const deduction = parseFloat(document.getElementById('deductionAmount').value);
+    
+    if (!name || isNaN(daysWorked) || isNaN(dailyRate) || isNaN(deduction)) {
+        alert("Please fill in all fields with valid values");
+        return;
+    }
+    
+    const grossPay = daysWorked * dailyRate;
+    const netPay = grossPay - deduction;
+    
+    employees.push({
+        name,
+        daysWorked,
+        dailyRate,
+        grossPay,
+        deduction,
+        netPay
+    });
+    
+    updatePayrollTable();
+    clearInputFields();
+}
+
+const deleteEmployee = () => {
+    const lineNumber = parseInt(document.getElementById('deleteLineNumber').value);
+    
+    if (isNaN(lineNumber) || lineNumber < 1 || lineNumber > employees.length) {
+        alert("Please enter a valid line number");
+        return;
+    }
+    
+    employees.splice(lineNumber - 1, 1);
+    updatePayrollTable();
+    document.getElementById('deleteLineNumber').value = '';
+}
+
+const updatePayrollTable = () => {
+    const payrollBody = document.getElementById('payrollBody');
+    payrollBody.innerHTML = '';
+    
+    employees.forEach((employee, index) => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${employee.name}</td>
+            <td>${employee.daysWorked}</td>
+            <td>₱${employee.dailyRate.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>₱${employee.grossPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>₱${employee.deduction.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>₱${employee.netPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        `;
+        
+        payrollBody.appendChild(row);
+    });
+}
+
+const clearInputFields = () => {
+    document.getElementById('employeeName').value = '';
+    document.getElementById('daysWorked').value = '';
+    document.getElementById('dailyRate').value = '';
+    document.getElementById('deductionAmount').value = '';
+}
+
+document.getElementById('addEmployeeBtn').addEventListener('click', addEmployee);
+document.getElementById('deleteEmployeeBtn').addEventListener('click', deleteEmployee);
+</script>
+
+</body>
+</html>
