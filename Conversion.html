@@ -73,7 +73,7 @@
     <div class="w3-dropdown-hover w3-hide-small">
       <button class="w3-padding-large w3-button" title="More">PROGRAMS <i class="fa fa-caret-down"></i></button>     
       <div class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="conversion.html" class="w3-bar-item w3-button">1. Conversion</a>
+        <a href="Conversion.html" class="w3-bar-item w3-button">1. Conversion</a>
         <a href="#tax-calculator" class="w3-bar-item w3-button">2. Income Tax Calculator</a>
         <a href="#looping" class="w3-bar-item w3-button">3. Looping Programs</a>
         <a href="#payroll" class="w3-bar-item w3-button">4. Payroll System</a>
@@ -106,7 +106,7 @@
         <input type="number" id="inputValue">
       </div>
       
-      <button onclick="convert()">Convert</button>
+      <button id="convertBtn">Convert</button>
       
       <div class="result" id="conversionResult">
         Result will appear here
@@ -118,7 +118,7 @@
 </div>
 
 <script>
-function convert() {
+const convert = () => {
     const conversionType = document.getElementById('conversionType').value;
     const inputValue = parseFloat(document.getElementById('inputValue').value);
     const resultElement = document.getElementById('conversionResult');
@@ -128,30 +128,30 @@ function convert() {
         return;
     }
     
-    let result;
+    const conversions = {
+        'cToF': (val) => (val * 9/5) + 32,
+        'fToC': (val) => (val - 32) * 5/9,
+        'mToF': (val) => val * 3.28084,
+        'fToM': (val) => val / 3.28084
+    };
     
-    switch(conversionType) {
-        case 'cToF':
-            result = (inputValue * 9/5) + 32;
-            resultElement.innerHTML = inputValue + "°C = " + result.toFixed(2) + "°F";
-            break;
-        case 'fToC':
-            result = (inputValue - 32) * 5/9;
-            resultElement.innerHTML = inputValue + "°F = " + result.toFixed(2) + "°C";
-            break;
-        case 'mToF':
-            result = inputValue * 3.28084;
-            resultElement.innerHTML = inputValue + " meters = " + result.toFixed(2) + " feet";
-            break;
-        case 'fToM':
-            result = inputValue / 3.28084;
-            resultElement.innerHTML = inputValue + " feet = " + result.toFixed(2) + " meters";
-            break;
-    }
+    const result = conversions[conversionType](inputValue);
+    
+    const conversionLabels = {
+        'cToF': { from: '°C', to: '°F' },
+        'fToC': { from: '°F', to: '°C' },
+        'mToF': { from: ' meters', to: ' feet' },
+        'fToM': { from: ' feet', to: ' meters' }
+    };
+    
+    const labels = conversionLabels[conversionType];
+    
+    resultElement.innerHTML = `${inputValue}${labels.from} = ${result.toFixed(2)}${labels.to}`;
 }
 
-// Enter key support
-document.getElementById('inputValue').addEventListener('keypress', function(e) {
+document.getElementById('convertBtn').addEventListener('click', convert);
+
+document.getElementById('inputValue').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') convert();
 });
 </script>
